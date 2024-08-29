@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { NextIntlClientProvider } from "next-intl";
+import { getMessages } from "next-intl/server";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -15,18 +17,21 @@ interface RootLayoutProps {
     };
 }
 
-export default function RootLayout({
+export default async function RootLayout({
     children,
-    params: { locale },
+    params: { locale }
 }: Readonly<RootLayoutProps>) {
+    const messages = await getMessages();
     return (
         <html lang={locale}>
             <body className={inter.className}>
-                <div className="flex flex-col min-h-screen max-w-4xl mx-auto">
-                    <div className="flex items-center justify-center mt-20">
-                        {children}
+                <NextIntlClientProvider messages={messages}>
+                    <div className="flex flex-col min-h-screen max-w-4xl mx-auto">
+                        <div className="flex items-center justify-center mt-20">
+                            {children}
+                        </div>
                     </div>
-                </div>
+                </NextIntlClientProvider>
             </body>
         </html>
     );
